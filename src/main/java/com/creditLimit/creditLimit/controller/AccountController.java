@@ -1,7 +1,7 @@
 package com.creditLimit.creditLimit.controller;
 
 import com.creditLimit.creditLimit.entity.Account;
-import com.creditLimit.creditLimit.service.AccountService;
+import com.creditLimit.creditLimit.service.IAccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.util.Objects;
 public class AccountController {
 
     @Autowired
-    private AccountService accountService;
+    private IAccountService IAccountService;
 
     @RequestMapping(
             method = RequestMethod.POST,
@@ -30,7 +30,7 @@ public class AccountController {
             log.error("BAD Request ");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(accountService.createAccount(account), HttpStatus.OK);
+        return new ResponseEntity<>(IAccountService.createAccount(account), HttpStatus.OK);
     }
 
     @RequestMapping(
@@ -41,7 +41,7 @@ public class AccountController {
         if(Strings.isBlank(accountId)) {
             return new ResponseEntity<>("Account id cannot be empty", HttpStatus.BAD_REQUEST);
         }
-        Account account = accountService.getAccount(accountId);
+        Account account = IAccountService.getAccount(accountId);
         if(Objects.isNull(account)) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -1,9 +1,8 @@
 package com.creditLimit.creditLimit.service;
 
 import com.creditLimit.creditLimit.entity.Account;
-import org.springframework.http.ResponseEntity;
 
-public interface AccountService {
+public interface IAccountService {
 
     public String createAccount(Account account);
 

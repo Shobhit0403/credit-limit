@@ -4,7 +4,7 @@ package com.creditLimit.creditLimit.controller;
 import com.creditLimit.creditLimit.entity.ActiveOffersRequest;
 import com.creditLimit.creditLimit.entity.Offer;
 import com.creditLimit.creditLimit.entity.UpdateRequest;
-import com.creditLimit.creditLimit.service.OfferService;
+import com.creditLimit.creditLimit.service.IOfferService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class OfferController {
 
     @Autowired
-    private OfferService offerService;
+    private IOfferService IOfferService;
 
     @RequestMapping(
             method = RequestMethod.POST
@@ -32,7 +32,7 @@ public class OfferController {
         }
         String offer;
         try {
-            offer = offerService.createOffer(offerRequest);
+            offer = IOfferService.createOffer(offerRequest);
         } catch (Exception e) {
             return new ResponseEntity<>("Not able to create limit offer", HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -50,7 +50,7 @@ public class OfferController {
         }
 
         try {
-            return new ResponseEntity<>(offerService.updateOffer(updateRequest), HttpStatus.OK);
+            return new ResponseEntity<>(IOfferService.updateOffer(updateRequest), HttpStatus.OK);
         } catch (Exception e) {
             return  new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -69,7 +69,7 @@ public class OfferController {
         }
 
         try {
-            return new ResponseEntity<>(offerService.getOffers(activeOffersRequest), HttpStatus.OK);
+            return new ResponseEntity<>(IOfferService.getOffers(activeOffersRequest), HttpStatus.OK);
         } catch (Exception e) {
             return  new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }

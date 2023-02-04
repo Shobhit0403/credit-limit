@@ -3,19 +3,14 @@ package com.creditLimit.creditLimit.service;
 import com.creditLimit.creditLimit.repository.AccountRepository;
 import com.creditLimit.creditLimit.entity.Account;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
-import java.util.Optional;
 
 @Service
-public class AccountServiceImpl implements AccountService{
+public class AccountServiceImpl implements IAccountService {
 
     @Autowired
     private AccountRepository accountRepository;

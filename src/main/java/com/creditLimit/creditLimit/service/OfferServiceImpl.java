@@ -17,19 +17,19 @@ import java.util.stream.Collectors;
 
 @Slf4j
 @Service
-public class OfferServiceImpl implements OfferService{
+public class OfferServiceImpl implements IOfferService {
 
     @Autowired
     private OfferRepository offerRepository;
 
     @Autowired
-    private AccountService accountService;
+    private IAccountService IAccountService;
 
     @Override
     public String createOffer(Offer offerRequest) throws Exception{
 
         String accountId = offerRequest.getAccountId();
-        Account account = accountService.getAccount(accountId);
+        Account account = IAccountService.getAccount(accountId);
         switch (offerRequest.getLimitType()){
             case ACCOUNT_LIMIT:
                 if(offerRequest.getNewLimit() > account.getAccountLimit()){
@@ -104,9 +104,9 @@ public class OfferServiceImpl implements OfferService{
         if(optionalOffer.isPresent()) {
             Offer currentOffer = optionalOffer.get();
             if(updateRequest.getStatus().equals(StatusType.ACCEPTED) && isOfferActive(currentOffer.getOfferExpiryDate())){
-                Account existingAccount = accountService.getAccount(currentOffer.getAccountId());
+                Account existingAccount = IAccountService.getAccount(currentOffer.getAccountId());
                 existingAccount.setAccountLimit(currentOffer.getNewLimit());
-                updatedAccount = accountService.updateAccount(existingAccount);
+                updatedAccount = IAccountService.updateAccount(existingAccount);
                 log.info("Account is updated");
             }
             offerRepository.deleteById(updateRequest.getOfferId());

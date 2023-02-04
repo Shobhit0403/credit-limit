@@ -7,7 +7,7 @@ import com.creditLimit.creditLimit.entity.UpdateRequest;
 
 import java.util.List;
 
-public interface OfferService {
+public interface IOfferService {
 
     public String createOffer(Offer offerRequest) throws Exception;
 
