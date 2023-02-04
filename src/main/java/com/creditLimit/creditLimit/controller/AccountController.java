@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/v1/account", produces = "application/json")
+@RequestMapping(value = "/api/v1/account")
 public class AccountController {
 
     @Autowired

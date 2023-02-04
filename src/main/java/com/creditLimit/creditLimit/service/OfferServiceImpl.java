@@ -7,9 +7,13 @@ import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -55,18 +59,29 @@ public class OfferServiceImpl implements OfferService{
 
     @Override
     public List<Offer> getOffers(ActiveOffersRequest activeOffersRequest) {
-        // get all the active offers date by account id query
-        // activation date is given then stream and filter on the basis of data, else return all
 
         String accountId = activeOffersRequest.getAccountId();
         Long activationDate = activeOffersRequest.getActivationDate();
-
+        List<Offer> listOfActiveOffers;
         if(Objects.nonNull(activationDate)){
-            return offerRepository.findAllByAccountIdAndActive(accountId, activationDate);
+            listOfActiveOffers = offerRepository.findAllByAccountIdAndOfferActivationDate(accountId, activationDate);
         }
         else {
-            return offerRepository.findAllByAccountId(accountId);
+            listOfActiveOffers = offerRepository.findAllByAccountId(accountId);
         }
+        return listOfActiveOffers.stream().filter(offer -> compareDate(offer.getOfferExpiryDate())).collect(Collectors.toList());
+    }
+
+    private boolean compareDate(String offerExpirationDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date currentDate = new Date();
+        Date expirationDate;
+        try {
+            expirationDate = sdf.parse(offerExpirationDate);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        return currentDate.compareTo(expirationDate)<0;
     }
 
     @Override
@@ -82,7 +97,7 @@ public class OfferServiceImpl implements OfferService{
         Optional<Offer> offer = offerRepository.findById(updateRequest.getOfferId());
         if(updateRequest.equals(StatusType.ACCEPTED) && offer.isPresent()){
             Account existingAccount = accountService.getAccount(offer.get().getAccountId());
-            existingAccount.setAccountLimit();
+//            existingAccount.setAccountLimit();
         }
         else if (updateRequest.equals(StatusType.REJECTED)) {
             offerRepository.deleteById(updateRequest.getOfferId());

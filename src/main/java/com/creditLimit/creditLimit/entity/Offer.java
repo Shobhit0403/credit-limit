@@ -22,7 +22,7 @@ public class Offer {
     @NonNull
     private LimitType limitType = LimitType.INVALID;
     private Long newLimit;
-    private Long offerActivationDate;
+    private String offerActivationDate;
     private String offerExpiryDate;
 
 }

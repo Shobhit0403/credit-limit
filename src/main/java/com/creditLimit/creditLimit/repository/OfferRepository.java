@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OfferRepository extends JpaRepository<Offer, String> {
 
-    List<Offer> findAllByAccountIdAndActive(String accountId, Long offerActivationDate);
+    List<Offer> findAllByAccountIdAndOfferActivationDate(String accountId, Long offerActivationDate);
 
     List<Offer> findAllByAccountId(String accountId);
 

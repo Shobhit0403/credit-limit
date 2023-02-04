@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -19,11 +21,20 @@ public class AccountServiceImpl implements AccountService{
 
     @Override
     public String createAccount(Account accountRequest) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        Date currentDate = new Date();
+        String date = sdf.format(currentDate);
+
             if((accountRepository.findById(accountRequest.getAccountId()).isPresent()))
                 return "Account already exist";
             else {
+
+                Account newAccount = accountRequest;
+                newAccount.setAccountLimitUpdateDate(date);
+//                newAccount.setPerTransactionLimitUpdateDate(date);
+                //handle exception
                 accountRepository.save(accountRequest);
-                return "Account created successfully";
+                return accountRequest.toString();
             }
     }
 

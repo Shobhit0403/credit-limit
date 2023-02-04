@@ -17,13 +17,12 @@ public class Account {
 
     private String customerId;
     private Long accountLimit = 0L;
-    private Long perTransactionLimit;
-    private Long lastAccountLimit;
-    private Long lastPerTransactionLimit;
+    private Long perTransactionLimit = 0L;
+    private Long lastAccountLimit = 0L;
+    private Long lastPerTransactionLimit = 0L;
 
-    //will save in epoch
-    private Long accountLimitUpdateDate;
+    private String accountLimitUpdateDate;
 
-    private Long perTransactionLimitUpdateDate;
+    private String perTransactionLimitUpdateDate;
 
 }
