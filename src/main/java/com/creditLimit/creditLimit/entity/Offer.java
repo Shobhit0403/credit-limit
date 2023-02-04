@@ -18,11 +18,11 @@ public class Offer {
     @Generated
     private String OfferId;
     private String accountId;
-    private LimitType limitType;
-    private String newLimit;
+
+    @NonNull
+    private LimitType limitType = LimitType.INVALID;
+    private Long newLimit;
     private Long offerActivationDate;
     private String offerExpiryDate;
-
-    private boolean active;
 
 }

@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/v1/account", consumes = "application/json", produces = "application/json")
+@RequestMapping(value = "/api/v1/account", produces = "application/json")
 public class AccountController {
 
     @Autowired
@@ -33,11 +33,10 @@ public class AccountController {
     }
 
     @RequestMapping(
-            method = RequestMethod.GET,
-            value = "/{couponCode}"
+            method = RequestMethod.GET
 
     )
-    public ResponseEntity<?> getAccount(@PathVariable("couponCode") String accountId, BindingResult result) {
+    public ResponseEntity<?> getAccount(@RequestParam(required = true) String accountId, BindingResult result) {
         if (result.hasErrors()) {
             log.error("BAD Request ");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -46,13 +45,10 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.valueOf(1))
                     .body("Account id cannot be empty");
         }
-        Account account;
-        try {
-             account = accountService.getAccount(accountId);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.valueOf(2)).body("Account does not exist");
+        Account account = accountService.getAccount(accountId);
+        if(Objects.isNull(account)) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
         return new ResponseEntity<>(account, HttpStatus.OK);
     }
 

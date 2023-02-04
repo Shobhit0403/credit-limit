@@ -8,13 +8,16 @@ import com.creditLimit.creditLimit.entity.UpdateRequest;
 import com.creditLimit.creditLimit.service.OfferService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping(value = "/api/v1/offer", consumes = "application/json", produces = "application/json")
+@RequestMapping(value = "/api/v1/offer")
 public class OfferController {
 
     @Autowired
@@ -24,8 +27,19 @@ public class OfferController {
             method = RequestMethod.POST,
             value = "/create"
     )
-    public Offer creatLimitOffer(@RequestBody Offer offerRequest) {
-        return offerService.createOffer(offerRequest);
+    public ResponseEntity<?> creatLimitOffer(@RequestBody Offer offerRequest, BindingResult result) {
+
+        if (result.hasErrors()) {
+            log.error("BAD Request ");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        String offer;
+        try {
+            offer = offerService.createOffer(offerRequest);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Not able to create limit offer", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>(offer, HttpStatus.OK);
     }
 
     @RequestMapping(
@@ -35,6 +49,8 @@ public class OfferController {
     public Account updateOffer(@RequestBody UpdateRequest updateRequest) {
         return offerService.updateOffer(updateRequest);
     }
+
+
     @RequestMapping(
             method = RequestMethod.GET
     )

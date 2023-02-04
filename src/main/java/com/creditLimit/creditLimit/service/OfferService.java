@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface OfferService {
 
-    public Offer createOffer(Offer offerRequest);
+    public String createOffer(Offer offerRequest) throws Exception;
 
     public List<Offer> getOffers(ActiveOffersRequest activeOffersRequest);
 

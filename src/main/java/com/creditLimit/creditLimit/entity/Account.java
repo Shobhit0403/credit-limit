@@ -16,7 +16,7 @@ public class Account {
     public String accountId;
 
     private String customerId;
-    private Long accountLimit;
+    private Long accountLimit = 0L;
     private Long perTransactionLimit;
     private Long lastAccountLimit;
     private Long lastPerTransactionLimit;
