@@ -29,7 +29,6 @@ public class AccountServiceImpl implements AccountService{
             if(accountRepository.findById(accountRequest.getAccountId()).isPresent())
                 return "Account already exist";
             else {
-
                 Account newAccount = accountRequest;
                 newAccount.setAccountLimitUpdateDate(date);
                 newAccount.setPerTransactionLimitUpdateDate(date);

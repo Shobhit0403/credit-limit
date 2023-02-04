@@ -22,10 +22,9 @@ public class OfferController {
     private OfferService offerService;
 
     @RequestMapping(
-            method = RequestMethod.POST,
-            value = "/create"
+            method = RequestMethod.POST
     )
-    public ResponseEntity<?> creatLimitOffer(@RequestBody Offer offerRequest, BindingResult result) {
+    public ResponseEntity<?> createLimitOffer(@RequestBody Offer offerRequest, BindingResult result) {
 
         if (result.hasErrors()) {
             log.error("BAD Request ");
@@ -41,8 +40,7 @@ public class OfferController {
     }
 
     @RequestMapping(
-            method = RequestMethod.POST,
-            value = "/update"
+            method = RequestMethod.PUT
     )
     public ResponseEntity<?> updateOffer(@RequestBody UpdateRequest updateRequest, BindingResult result) {
 
@@ -61,7 +59,7 @@ public class OfferController {
 
     @RequestMapping(
             method = RequestMethod.GET,
-            value = "/get", produces = "application/json"
+            produces = "application/json"
     )
     public ResponseEntity<?> getOffer(@RequestBody ActiveOffersRequest activeOffersRequest, BindingResult result){
 
@@ -75,7 +73,5 @@ public class OfferController {
         } catch (Exception e) {
             return  new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-
     }
 }

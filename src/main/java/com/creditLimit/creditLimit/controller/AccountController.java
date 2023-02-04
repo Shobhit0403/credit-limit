@@ -21,7 +21,8 @@ public class AccountController {
     private AccountService accountService;
 
     @RequestMapping(
-            method = RequestMethod.POST
+            method = RequestMethod.POST,
+            produces = "application/json"
     )
     public ResponseEntity<?> createAccount(@RequestBody Account account, BindingResult result) {
 
@@ -34,16 +35,11 @@ public class AccountController {
 
     @RequestMapping(
             method = RequestMethod.GET
-
     )
-    public ResponseEntity<?> getAccount(@RequestParam(required = true) String accountId, BindingResult result) {
-        if (result.hasErrors()) {
-            log.error("BAD Request ");
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+    public ResponseEntity<?> getAccount(@RequestParam("accountId") String accountId) {
+
         if(Strings.isBlank(accountId)) {
-            return ResponseEntity.status(HttpStatus.valueOf(1))
-                    .body("Account id cannot be empty");
+            return new ResponseEntity<>("Account id cannot be empty", HttpStatus.BAD_REQUEST);
         }
         Account account = accountService.getAccount(accountId);
         if(Objects.isNull(account)) {
@@ -51,6 +47,4 @@ public class AccountController {
         }
         return new ResponseEntity<>(account, HttpStatus.OK);
     }
-
-
 }
