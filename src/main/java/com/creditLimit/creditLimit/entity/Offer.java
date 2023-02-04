@@ -2,9 +2,7 @@ package com.creditLimit.creditLimit.entity;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 
 @Data
@@ -15,8 +13,7 @@ public class Offer {
 
     @Id
     @NonNull
-    @Generated
-    private String OfferId;
+    @GeneratedValue(strategy= GenerationType.IDENTITY)    private Long OfferId;
     private String accountId;
 
     @NonNull

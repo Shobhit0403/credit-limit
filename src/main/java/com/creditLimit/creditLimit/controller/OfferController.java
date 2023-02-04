@@ -1,7 +1,6 @@
 package com.creditLimit.creditLimit.controller;
 
 
-import com.creditLimit.creditLimit.entity.Account;
 import com.creditLimit.creditLimit.entity.ActiveOffersRequest;
 import com.creditLimit.creditLimit.entity.Offer;
 import com.creditLimit.creditLimit.entity.UpdateRequest;
@@ -13,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -46,15 +44,38 @@ public class OfferController {
             method = RequestMethod.POST,
             value = "/update"
     )
-    public Account updateOffer(@RequestBody UpdateRequest updateRequest) {
-        return offerService.updateOffer(updateRequest);
+    public ResponseEntity<?> updateOffer(@RequestBody UpdateRequest updateRequest, BindingResult result) {
+
+        if (result.hasErrors()) {
+            log.error("BAD Request ");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            return new ResponseEntity<>(offerService.updateOffer(updateRequest), HttpStatus.OK);
+        } catch (Exception e) {
+            return  new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
     @RequestMapping(
-            method = RequestMethod.GET
+            method = RequestMethod.GET,
+            value = "/get", produces = "application/json"
     )
-    public List<Offer> getOffer(@RequestBody ActiveOffersRequest activeOffersRequest){
-        return offerService.getOffers(activeOffersRequest);
+    public ResponseEntity<?> getOffer(@RequestBody ActiveOffersRequest activeOffersRequest, BindingResult result){
+
+        if (result.hasErrors()) {
+            log.error("BAD Request ");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            return new ResponseEntity<>(offerService.getOffers(activeOffersRequest), HttpStatus.OK);
+        } catch (Exception e) {
+            return  new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
     }
 }

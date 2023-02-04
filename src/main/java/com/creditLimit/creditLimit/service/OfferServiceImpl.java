@@ -3,8 +3,8 @@ package com.creditLimit.creditLimit.service;
 import com.creditLimit.creditLimit.entity.*;
 import com.creditLimit.creditLimit.repository.OfferRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
@@ -27,10 +27,6 @@ public class OfferServiceImpl implements OfferService{
 
     @Override
     public String createOffer(Offer offerRequest) throws Exception{
-        // create  offer built offer object
-        // and save this in another table, offer
-        // offer only ne created if only if  for a greater limit than current limit.
-        //fetch account id
 
         String accountId = offerRequest.getAccountId();
         Account account = accountService.getAccount(accountId);
@@ -49,30 +45,79 @@ public class OfferServiceImpl implements OfferService{
                 log.error("Invalid limit type found");
                 throw new Exception("Invalid limit type found");
         }
-        return Strings.EMPTY;
+        return "Limit is smaller then current limit";
     }
 
-    private String saveOffer(Offer offerRequest) {
-        offerRepository.save(offerRequest);
-        return "offer created Successfully";
+    private String saveOffer(Offer offerRequest) throws ParseException {
+        //check activation date should be greater than expiry
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        if(sdf.parse(offerRequest.getOfferExpiryDate()).compareTo(sdf.parse(offerRequest.getOfferActivationDate()))>0) {
+            try {
+                offerRepository.save(offerRequest);
+            } catch (JpaSystemException e) {
+                throw new RuntimeException("Not able to fetch value from db");
+            }
+            return "offer created Successfully \n" + "Result - " + offerRequest.toString();
+        }
+        else {
+            return "Invalid Request";
+        }
     }
 
     @Override
     public List<Offer> getOffers(ActiveOffersRequest activeOffersRequest) {
 
         String accountId = activeOffersRequest.getAccountId();
-        Long activationDate = activeOffersRequest.getActivationDate();
+        String activationDate = activeOffersRequest.getActivationDate();
         List<Offer> listOfActiveOffers;
         if(Objects.nonNull(activationDate)){
-            listOfActiveOffers = offerRepository.findAllByAccountIdAndOfferActivationDate(accountId, activationDate);
+            try {
+                listOfActiveOffers = offerRepository.findAllByAccountIdAndOfferActivationDate(accountId, activationDate);
+            } catch (JpaSystemException e) {
+                throw new RuntimeException("Not able to fetch value from db");
+            }
         }
         else {
-            listOfActiveOffers = offerRepository.findAllByAccountId(accountId);
+            try {
+                listOfActiveOffers = offerRepository.findAllByAccountId(accountId);
+            } catch (JpaSystemException e) {
+                throw new RuntimeException("Not able to fetch value from db");
+            }
         }
-        return listOfActiveOffers.stream().filter(offer -> compareDate(offer.getOfferExpiryDate())).collect(Collectors.toList());
+        return listOfActiveOffers.stream().filter(offer -> isOfferActive(offer.getOfferExpiryDate())).collect(Collectors.toList());
     }
 
-    private boolean compareDate(String offerExpirationDate) {
+    @Override
+    public Account updateOffer(UpdateRequest updateRequest) {
+
+        if(Objects.isNull(updateRequest.getOfferId())) {
+            log.error("Status type is not selected");
+            throw new NullPointerException("offer Id is null");
+        }
+
+        if(updateRequest.getStatus().equals(StatusType.INVALID)) {
+            log.warn("Status type is not selected");
+            return new Account();
+        }
+        Account updatedAccount = new Account();
+        Optional<Offer> optionalOffer = offerRepository.findById(updateRequest.getOfferId());
+        if(optionalOffer.isPresent()) {
+            Offer currentOffer = optionalOffer.get();
+            if(updateRequest.getStatus().equals(StatusType.ACCEPTED) && isOfferActive(currentOffer.getOfferExpiryDate())){
+                Account existingAccount = accountService.getAccount(currentOffer.getAccountId());
+                existingAccount.setAccountLimit(currentOffer.getNewLimit());
+                updatedAccount = accountService.updateAccount(existingAccount);
+                log.info("Account is updated");
+            }
+            offerRepository.deleteById(updateRequest.getOfferId());
+            return updatedAccount;
+        }
+        //offer not present exception
+        log.info("Account is not updated");
+        return updatedAccount;
+    }
+
+    private boolean isOfferActive(String offerExpirationDate) {
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         Date currentDate = new Date();
         Date expirationDate;
@@ -82,26 +127,5 @@ public class OfferServiceImpl implements OfferService{
             throw new RuntimeException(e);
         }
         return currentDate.compareTo(expirationDate)<0;
-    }
-
-    @Override
-    public Account updateOffer(UpdateRequest updateRequest) {
-
-
-        //using offer id find the offer from db
-        //if the status is Accepted, then we need to update Account for the particular account
-        //else delete that offer from db
-//        if(updateRequest.)
-//        Also check if the offer is active or not
-
-        Optional<Offer> offer = offerRepository.findById(updateRequest.getOfferId());
-        if(updateRequest.equals(StatusType.ACCEPTED) && offer.isPresent()){
-            Account existingAccount = accountService.getAccount(offer.get().getAccountId());
-//            existingAccount.setAccountLimit();
-        }
-        else if (updateRequest.equals(StatusType.REJECTED)) {
-            offerRepository.deleteById(updateRequest.getOfferId());
-        }
-        return null;
     }
 }

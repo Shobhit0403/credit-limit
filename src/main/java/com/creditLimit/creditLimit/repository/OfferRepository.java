@@ -6,9 +6,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 
-public interface OfferRepository extends JpaRepository<Offer, String> {
+public interface OfferRepository extends JpaRepository<Offer, Long> {
 
-    List<Offer> findAllByAccountIdAndOfferActivationDate(String accountId, Long offerActivationDate);
+    List<Offer> findAllByAccountIdAndOfferActivationDate(String accountId, String offerActivationDate);
 
     List<Offer> findAllByAccountId(String accountId);
 

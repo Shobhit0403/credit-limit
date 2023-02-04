@@ -5,6 +5,7 @@ import com.creditLimit.creditLimit.entity.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -25,23 +26,39 @@ public class AccountServiceImpl implements AccountService{
         Date currentDate = new Date();
         String date = sdf.format(currentDate);
 
-            if((accountRepository.findById(accountRequest.getAccountId()).isPresent()))
+            if(accountRepository.findById(accountRequest.getAccountId()).isPresent())
                 return "Account already exist";
             else {
 
                 Account newAccount = accountRequest;
                 newAccount.setAccountLimitUpdateDate(date);
-//                newAccount.setPerTransactionLimitUpdateDate(date);
+                newAccount.setPerTransactionLimitUpdateDate(date);
                 //handle exception
-                accountRepository.save(accountRequest);
+                try {
+                    accountRepository.save(accountRequest);
+                } catch (JpaSystemException e) {
+                    throw new RuntimeException("Not able to save value from db");
+                }
                 return accountRequest.toString();
             }
     }
 
     @Override
     public Account getAccount(String accountId) {
+        try {
+            return accountRepository.findById(accountId).orElse(new Account());
+        } catch (JpaSystemException e) {
+            throw new RuntimeException("Not able to save value from db");
+        }
+    }
 
-        return accountRepository.findById(accountId).orElse(null);
-
+    @Override
+    public Account updateAccount(Account updatedAccount) {
+        try {
+            accountRepository.save(updatedAccount);
+        } catch (JpaSystemException e) {
+            throw new RuntimeException("Not able to save value from db");
+        }
+        return updatedAccount;
     }
 }

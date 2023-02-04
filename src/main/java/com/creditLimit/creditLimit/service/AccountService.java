@@ -9,4 +9,7 @@ public interface AccountService {
 
     public Account getAccount(String accountId);
 
+    public Account updateAccount(Account updatedAccount);
+
+
 }

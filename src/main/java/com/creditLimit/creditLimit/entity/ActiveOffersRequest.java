@@ -14,6 +14,6 @@ public class ActiveOffersRequest {
     @NonNull
     private String accountId;
 
-    private Long activationDate;
+    private String activationDate;
 
 }

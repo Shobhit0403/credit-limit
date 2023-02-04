@@ -11,7 +11,7 @@ import lombok.NonNull;
 public class UpdateRequest {
 
     @NonNull
-    private String OfferId;
+    private Long offerId;
     @NonNull
-    private StatusType status;
+    private StatusType status = StatusType.INVALID;
 }
