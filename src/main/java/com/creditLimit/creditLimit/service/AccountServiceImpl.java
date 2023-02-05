@@ -40,7 +40,7 @@ public class AccountServiceImpl implements IAccountService {
     @Override
     public Account getAccount(String accountId) {
         try {
-            return accountRepository.findById(accountId).orElse(new Account());
+            return accountRepository.findById(accountId).orElse(null);
         } catch (JpaSystemException e) {
             throw new RuntimeException("Not able to save value from db");
         }

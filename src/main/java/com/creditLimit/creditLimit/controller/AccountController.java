@@ -43,6 +43,7 @@ public class AccountController {
         }
         Account account = IAccountService.getAccount(accountId);
         if(Objects.isNull(account)) {
+            log.error("Account Does not exist");
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(account, HttpStatus.OK);

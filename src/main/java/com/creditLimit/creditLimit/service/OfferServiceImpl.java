@@ -4,6 +4,8 @@ import com.creditLimit.creditLimit.entity.*;
 import com.creditLimit.creditLimit.repository.OfferRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.orm.jpa.JpaSystemException;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,10 @@ public class OfferServiceImpl implements IOfferService {
 
         String accountId = offerRequest.getAccountId();
         Account account = IAccountService.getAccount(accountId);
+        if(Objects.isNull(account)) {
+            log.error("Account Does not exist");
+            throw new Exception("Account Does not exist");
+        }
         switch (offerRequest.getLimitType()){
             case ACCOUNT_LIMIT:
                 if(offerRequest.getNewLimit() > account.getAccountLimit()){
@@ -49,7 +55,7 @@ public class OfferServiceImpl implements IOfferService {
     }
 
     private String saveOffer(Offer offerRequest) throws ParseException {
-        //check activation date should be greater than expiry
+        //check activation date should be smaller than expiry
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         if(sdf.parse(offerRequest.getOfferExpiryDate()).compareTo(sdf.parse(offerRequest.getOfferActivationDate()))>0) {
             try {
