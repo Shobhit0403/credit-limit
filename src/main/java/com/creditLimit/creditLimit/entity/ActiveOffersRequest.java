@@ -2,8 +2,6 @@ package com.creditLimit.creditLimit.entity;
 
 import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
 
 
 @Data

@@ -3,7 +3,6 @@ package com.creditLimit.creditLimit.entity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @AllArgsConstructor
