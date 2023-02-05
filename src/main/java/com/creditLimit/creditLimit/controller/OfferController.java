@@ -34,7 +34,7 @@ public class OfferController {
         try {
             offer = IOfferService.createOffer(offerRequest);
         } catch (Exception e) {
-            return new ResponseEntity<>("Not able to create limit offer", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Not able to create limit offer with error: "+e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>(offer, HttpStatus.OK);
     }
